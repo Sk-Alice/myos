@@ -1,5 +1,5 @@
-#ifndef __GDT.H
-#define __GDT.H
+#ifndef __GDT_H
+#define __GDT_H
 
 #include "types.h"
 
@@ -20,7 +20,7 @@ public:
         uint8_t type;
         uint8_t flags_limit_hi;
         uint8_t base_vhi;
-    } __arrtibute__((packed));      // 告诉编译器取消结构在编译过程中的优化对齐
+    } __attribute__((packed));      // 告诉编译器取消结构在编译过程中的优化对齐
 
     SegmentDescriptor nullSegmentDescriptor;
     SegmentDescriptor unusedSegmentDescriptor;
