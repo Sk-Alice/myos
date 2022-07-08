@@ -14,11 +14,11 @@ GlobalDescriptorTable::GlobalDescriptorTable()
 
 GlobalDescriptorTable::~GlobalDescriptorTable() {}
 
-uint16_t GlobalDescriptorTable::DataSegmentDescriptor() {
+uint16_t GlobalDescriptorTable::DataSegmentSelector() {
     return (uint8_t*)&dataSegmentDescriptor - (uint8_t*)this;
 }
 
-uint16_t GlobalDescriptorTable::CodeSegmentDescriptor() {
+uint16_t GlobalDescriptorTable::CodeSegmentSelector() {
     return (uint8_t*)&codeSegmentDescriptor - (uint8_t*)this;
 }
 
