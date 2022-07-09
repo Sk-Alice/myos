@@ -1,11 +1,11 @@
-
+.set IRQ_BASE, 0x20
 .section .text
 .extern __ZN16InterruptManager15handleInterruptEhj
 
 .macro HandleInterruptRequest num
 .global __ZN16InterruptManager26HandleInterruptRequest\num\()Ev
 __ZN16InterruptManager26HandleInterruptRequest\num\()Ev:
-    movb $\num, (interruptnumber)
+    movb $\num + IRQ_BASE, (interruptnumber)
     jmp int_bottom
 .endm
 
@@ -16,6 +16,7 @@ __ZN16InterruptManager19HandleException\num\()Ev:
     jmp int_bottom
 .endm
 
+# 定义外部中断
 HandleInterruptRequest 0x00
 HandleInterruptRequest 0x01
 HandleInterruptRequest 0x02
@@ -34,6 +35,7 @@ HandleInterruptRequest 0x0E
 HandleInterruptRequest 0x0F
 HandleInterruptRequest 0x31
 
+# 定义异常
 HandleException 0x00
 HandleException 0x01
 HandleException 0x02

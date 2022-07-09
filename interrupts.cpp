@@ -6,20 +6,24 @@ InterruptManager::GateDescriptor InterruptManager::interruptDescriptorTable[256]
 
 void InterruptManager::SetInterruptDescriptorTableEntry(
         uint8_t interruptNumber,
-        uint16_t CodeSegmentSelectorOffset,
-        void(*handle)(),
+        uint16_t codeSegmentSelectorOffset,
+        void (*handler)(),
         uint8_t DescriptorPrivilegelLevel,
         uint8_t DescriptorType) {
             const uint8_t IDT_DESC_PRESENT = 0x80;
 
-            interruptDescriptorTable[interruptNumber].handlerAdddressLowBits = ((uint32_t)handle) & 0xffff;
-            interruptDescriptorTable[interruptNumber].handlerAdddressHighBits = (((uint32_t)handle) >> 16) & 0xffff;
-            interruptDescriptorTable[interruptNumber].gdt_codeSegmentSelector = CodeSegmentSelectorOffset;
+            interruptDescriptorTable[interruptNumber].handlerAddressLowBits = ((uint32_t)handler) & 0xffff;
+            interruptDescriptorTable[interruptNumber].handlerAddressHighBits = ((uint32_t)handler >> 16) & 0xffff;
+            interruptDescriptorTable[interruptNumber].gdt_codeSegmentSelector = codeSegmentSelectorOffset;
             interruptDescriptorTable[interruptNumber].access = IDT_DESC_PRESENT | ((DescriptorPrivilegelLevel & 3) << 5) | DescriptorType;
             interruptDescriptorTable[interruptNumber].reserved = 0;
-            }
+}
 
-InterruptManager::InterruptManager(uint16_t hardwareInterruptOffset, GlobalDescriptorTable* gdt) {
+InterruptManager::InterruptManager(uint16_t hardwareInterruptOffset, GlobalDescriptorTable* gdt) 
+    : picMasterCommand(0x20),
+    picMasterData(0x21), 
+    picSlaveCommand(0xA0), 
+    picSlaveData(0xA1) {
     this->hardwareInterruptOffset = hardwareInterruptOffset;
     uint16_t CodeSegment = gdt->CodeSegmentSelector();
 
@@ -66,6 +70,33 @@ InterruptManager::InterruptManager(uint16_t hardwareInterruptOffset, GlobalDescr
     SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x0E, CodeSegment, &HandleInterruptRequest0x0E, 0, IDT_INTERRUPT_GATE);
     SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x0F, CodeSegment, &HandleInterruptRequest0x0F, 0, IDT_INTERRUPT_GATE);
     SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x31, CodeSegment, &HandleInterruptRequest0x31, 0, IDT_INTERRUPT_GATE);
+
+    picMasterCommand.write(0x11);
+    picSlaveCommand.write(0x11);
+
+    picMasterData.write(hardwareInterruptOffset);
+    picSlaveData.write(hardwareInterruptOffset + 8);
+
+    picMasterData.write(0x04);
+    picSlaveData.write(0x02);
+
+    picMasterData.write(0x01);
+    picSlaveData.write(0x01);
+
+    picMasterData.write(0x00);
+    picSlaveData.write(0x00);
+
+    InterruptDescriptorTablePointer idt;
+    idt.size = 256 * sizeof(GateDescriptor) - 1;
+    idt.base = (uint32_t)interruptDescriptorTable;
+
+    asm volatile("lidt %0": :"m" (idt));
+}
+
+InterruptManager::~InterruptManager() {}
+
+void InterruptManager::Activate() {
+    asm("sti");
 }
 
 uint32_t InterruptManager::handleInterrupt(uint8_t interruptNumber, uint32_t esp) {

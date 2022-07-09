@@ -14,12 +14,12 @@ public:
         uint32_t Base();
         uint32_t Limit();
     private:
-        uint16_t limit_lo;
-        uint16_t base_lo;
-        uint8_t base_hi;
-        uint8_t type;
-        uint8_t flags_limit_hi;
-        uint8_t base_vhi;
+        uint16_t limit_lo;          // limit字段低位
+        uint16_t base_lo;           // base字段低位
+        uint8_t base_hi;            // base字段次高位
+        uint8_t type;               // type字段和其他标志
+        uint8_t flags_limit_hi;     // limit字段高位和其他标志
+        uint8_t base_vhi;           // base字段最高位
     } __attribute__((packed));      // 告诉编译器取消结构在编译过程中的优化对齐
 
     SegmentDescriptor nullSegmentDescriptor;
