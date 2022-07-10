@@ -15,11 +15,11 @@ GlobalDescriptorTable::GlobalDescriptorTable()
 GlobalDescriptorTable::~GlobalDescriptorTable() {}
 
 uint16_t GlobalDescriptorTable::DataSegmentSelector() {
-    return ((uint8_t*)&dataSegmentDescriptor - (uint8_t*)this) >> 3;
+    return ((uint8_t*)&dataSegmentDescriptor - (uint8_t*)this) << 3;
 }
 
 uint16_t GlobalDescriptorTable::CodeSegmentSelector() {
-    return ((uint8_t*)&codeSegmentDescriptor - (uint8_t*)this) >> 3;
+    return ((uint8_t*)&codeSegmentDescriptor - (uint8_t*)this) << 3;
 }
 
 GlobalDescriptorTable::SegmentDescriptor::SegmentDescriptor(uint32_t base, uint32_t limit, uint8_t type) {
@@ -50,7 +50,7 @@ GlobalDescriptorTable::SegmentDescriptor::SegmentDescriptor(uint32_t base, uint3
     // limit字段低16位的后8位
     target[1] = (limit >> 8) & 0xff;
     // limit字段高位
-    target[6] = (limit >> 16) & 0xf | 0xC0;
+    target[6] |= (limit >> 16) & 0xf;
 
     // base字段低16位的前8位
     target[2] = base & 0xff;

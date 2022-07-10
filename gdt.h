@@ -3,11 +3,9 @@
 
 #include "types.h"
 
-class GlobalDescriptorTable
-{
+class GlobalDescriptorTable {
 public:
-    class SegmentDescriptor
-    {
+    class SegmentDescriptor {
     public:
         // base 段的起始地址    limit 段的寻址最大范围    type 段的类型(访问权限)
         SegmentDescriptor(uint32_t base, uint32_t limit, uint8_t type);
