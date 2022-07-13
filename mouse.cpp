@@ -8,25 +8,30 @@ MouseDriver::MouseDriver(InterruptManager* manager)
     buttons(0),
     x(40),
     y(12) {
-        uint16_t* VideoMemory = (uint16_t*)0xb8000;
-        VideoMemory[y * 80 + x] = ((VideoMemory[y * 80 + x] & 0xf000) >> 4) |
-                                ((VideoMemory[y * 80 + x] & 0x0f00) << 4) | 
-                                (VideoMemory[y * 80 + x] & 0x00ff);
-
-        commandport.Write(0xa8);
-        commandport.Write(0x20);
-        uint8_t status = (dataport.Read() | 2) & ~0x20;
-        commandport.Write(0x60);
-        dataport.Write(status);
-
-        commandport.Write(0xd4);
-        dataport.Write(0xf4);
-        dataport.Read();
+        
 }
 
 MouseDriver::~MouseDriver() {}
 
 void printf(const char*);
+
+void MouseDriver::Activate() {
+    uint16_t* VideoMemory = (uint16_t*)0xb8000;
+    VideoMemory[y * 80 + x] = ((VideoMemory[y * 80 + x] & 0xf000) >> 4) |
+                                ((VideoMemory[y * 80 + x] & 0x0f00) << 4) | 
+                                (VideoMemory[y * 80 + x] & 0x00ff);
+
+    commandport.Write(0xa8);
+    commandport.Write(0x20);
+    uint8_t status = (dataport.Read() | 2) & ~0x20;
+    commandport.Write(0x60);
+    dataport.Write(status);
+
+    commandport.Write(0xd4);
+    dataport.Write(0xf4);
+    dataport.Read();
+}
+
 uint32_t MouseDriver::HandleInterrupt(uint32_t esp) {
     uint8_t status = commandport.Read();
     if (!(status & 0x20)) return esp;

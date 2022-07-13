@@ -3,6 +3,7 @@
 #include "interrupts.h"
 #include "keyboard.h"
 #include "mouse.h"
+#include "driver.h"
 
 void printf(const char* str) {
     static uint16_t* VideoMemory = (uint16_t*)0xb8000;
@@ -37,6 +38,23 @@ void printf(const char* str) {
     }
 }
 
+void printHex(uint8_t key) {
+    char* foo = (char*)"00";
+    char* hex = (char*)"0123456789ABCDEF";
+    foo[0] = hex[(key >> 4) & 0x0f];
+    foo[1] = hex[key & 0x0f];
+    printf((const char*)foo);
+}
+
+class PrintKeyboardEventHandler : public KeyboardEventHandler {
+public:
+    void OnKeyDown(char c) {
+        char* foo = " ";
+        foo[0] = c;
+        printf(foo);
+    }
+};
+
 typedef void (*constructor)();
 extern "C" constructor start_ctors;
 extern "C" constructor end_ctors;
@@ -54,8 +72,17 @@ extern "C" void kernelMain(void* multiboot_structure, uint32_t magicnumber) {
     GlobalDescriptorTable gdt;
     InterruptManager interrupts(0x20, &gdt);
 
-    KeyBoardDriver keyboard(&interrupts);
+    DriverManager drvManager;
+    PrintKeyboardEventHandler kbhandler;
+
+    KeyBoardDriver keyboard(&interrupts, &kbhandler);
+    drvManager.AddDriver(&keyboard);
+
     MouseDriver mouse(&interrupts);
+    drvManager.AddDriver(&mouse);
+
+    drvManager.ActivateAll();
+
     interrupts.Activate();
     while(1);
 }
