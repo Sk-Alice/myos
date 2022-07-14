@@ -1,5 +1,8 @@
-#include "driver.h"
-#include "types.h"
+#include "drivers/driver.h"
+#include "common/types.h"
+
+using namespace myos::common;
+using namespace myos::drivers;
 
 Driver::Driver() {}
 Driver::~Driver() {}

@@ -1,9 +1,18 @@
-GPPPARAMS = -m32 -fno-use-cxa-atexit -fleading-underscore -fno-exceptions -fno-builtin -nostdlib -fno-rtti -fno-pie
+GPPPARAMS = -m32 -Iinclude -fno-use-cxa-atexit -fleading-underscore -fno-exceptions -fno-builtin -nostdlib -fno-rtti -fno-pie
 
 ASPARAMS = --32
 LDPARAMS = -melf_i386 -no-pie
 
-objects = loader.o kernel.o	gdt.o driver.o port.o interrupts.o interruptstubs.o keyboard.o mouse.o
+objects = obj/loader.o \
+		  	obj/gdt.o \
+			obj/drivers/driver.o \
+			obj/hardwarecommunication/port.o \
+			obj/hardwarecommunication/interrupts.o \
+			obj/hardwarecommunication/interruptstubs.o \
+			obj/drivers/keyboard.o \
+			obj/drivers/mouse.o \
+			obj/kernel.o \
+
 
 # 目的:依赖
 #	通过依赖生成目的的命令
@@ -11,10 +20,12 @@ objects = loader.o kernel.o	gdt.o driver.o port.o interrupts.o interruptstubs.o 
 #	%  按照目的顺序依次对应
 #	#< 按照依赖顺序依次对应
 
-%.o: %.cpp
+obj/%.o: src/%.cpp
+	mkdir -p $(@D)
 	g++ ${GPPPARAMS} -o $@ -c $<
 
-%.o: %.s
+obj/%.o: src/%.s
+	mkdir -p $(@D)
 	as ${ASPARAMS} -o $@ $<
 
 mykernel.bin: linker.ld ${objects}
@@ -44,4 +55,4 @@ run: mykernel.iso
 
 .PHONY: clean
 clean:
-	rm -rf ${objects} mykernel.bin mykernel.iso
+	rm -rf mykernel.bin mykernel.iso obj
