@@ -22,11 +22,13 @@ namespace myos
             virtual void Write(myos::common::uint8_t _data);
             virtual myos::common::uint8_t Read();
         protected:
-            static inline void Write8(myos::common::uint16_t _port, myos::common::uint8_t _data) {
+            static inline void Write8(myos::common::uint16_t _port, myos::common::uint8_t _data) 
+            {
                 __asm__ volatile("outb %0, %1" : : "a" (_data), "Nd" (_port));
             }
 
-            static inline myos::common::uint8_t Read8(myos::common::uint16_t _port) {
+            static inline myos::common::uint8_t Read8(myos::common::uint16_t _port) 
+            {
                 myos::common::uint8_t result;
                 __asm__ volatile("inb %1, %0" : "=a" (result) : "Nd" (_port));
                 return result;
@@ -40,7 +42,8 @@ namespace myos
 
             virtual void Write(myos::common::uint8_t data);
         protected:
-            static inline void Write8Slow(myos::common::uint16_t _port, myos::common::uint8_t _data) {
+            static inline void Write8Slow(myos::common::uint16_t _port, myos::common::uint8_t _data) 
+            {
                 __asm__ volatile("outb %0, %1\njmp 1f\n1: jmp 1f\n1:" : : "a" (_data), "Nd" (_port));
             }
         };
@@ -53,11 +56,13 @@ namespace myos
             virtual void Write(myos::common::uint16_t data);
             virtual myos::common::uint16_t Read();
         protected:
-            static inline void Write16(myos::common::uint16_t _port, myos::common::uint16_t _data) {
+            static inline void Write16(myos::common::uint16_t _port, myos::common::uint16_t _data) 
+            {
                 __asm__ volatile("outw %0, %1" : : "a" (_data), "Nd" (_port));
             }
 
-            static inline myos::common::uint16_t Read16(myos::common::uint16_t _port) {
+            static inline myos::common::uint16_t Read16(myos::common::uint16_t _port) 
+            {
                 myos::common::uint16_t result;
                 __asm__ volatile("inw %1, %0" : "=a" (result) : "Nd" (_port));
                 return result;
@@ -73,11 +78,13 @@ namespace myos
             virtual myos::common::uint32_t Read();
         
         protected:
-            static inline void Write32(myos::common::uint16_t _port, myos::common::uint32_t _data) {
+            static inline void Write32(myos::common::uint16_t _port, myos::common::uint32_t _data) 
+            {
                 __asm__ volatile("outl %0, %1" : : "a" (_data), "Nd" (_port));
             }
 
-            static inline myos::common::uint32_t Read32(myos::common::uint16_t _port) {
+            static inline myos::common::uint32_t Read32(myos::common::uint16_t _port) 
+            {
                 myos::common::uint32_t result;
                 __asm__ volatile("inl %1, %0" : "=a" (result) : "Nd" (_port));
                 return result;

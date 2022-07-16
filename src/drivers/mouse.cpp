@@ -16,14 +16,14 @@ MouseDriver::MouseDriver(InterruptManager* manager, MouseEventHandler* handler)
     commandport(0x64),
     offset(0),
     buttons(0),
-    handler(handler) {       
-}
+    handler(handler) {}
 
 MouseDriver::~MouseDriver() {}
 
 void printf(const char*);
 
-void MouseDriver::Activate() {
+void MouseDriver::Activate() 
+{
     if (handler != nullptr) {
         handler->OnActivate();
     }
@@ -39,7 +39,8 @@ void MouseDriver::Activate() {
     dataport.Read();
 }
 
-uint32_t MouseDriver::HandleInterrupt(uint32_t esp) {
+uint32_t MouseDriver::HandleInterrupt(uint32_t esp) 
+{
     uint8_t status = commandport.Read();
     if (!(status & 0x20) || nullptr == handler) return esp;
 

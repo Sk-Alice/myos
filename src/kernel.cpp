@@ -1,6 +1,7 @@
 #include "common/types.h"
 #include "gdt.h"
 #include "hardwarecommunication/interrupts.h"
+#include "hardwarecommunication/pci.h"
 #include "drivers/keyboard.h"
 #include "drivers/mouse.h"
 #include "drivers/driver.h"
@@ -10,7 +11,8 @@ using namespace myos::common;
 using namespace myos::drivers;
 using namespace myos::hardwarecommunication;
 
-void printf(const char* str) {
+void printf(const char* str) 
+{
     static uint16_t* VideoMemory = (uint16_t*)0xb8000;
 
     static uint8_t x = 0, y = 0;
@@ -43,7 +45,8 @@ void printf(const char* str) {
     }
 }
 
-void printHex(uint8_t key) {
+void printfHex(uint8_t key) 
+{
     char* foo = (char*)"00";
     char* hex = (char*)"0123456789ABCDEF";
     foo[0] = hex[(key >> 4) & 0x0f];
@@ -53,7 +56,8 @@ void printHex(uint8_t key) {
 
 class PrintKeyboardEventHandler : public KeyboardEventHandler {
 public:
-    void OnKeyDown(char c) {
+    void OnKeyDown(char c)
+    {
         char* foo = (char*)" ";
         foo[0] = c;
         printf(foo);
@@ -64,18 +68,18 @@ class MouseToConsole : public MouseEventHandler {
 public:
     MouseToConsole() 
         : x(40),
-          y(12) {
-        
-    }
+          y(12) {}
 
-    void OnActivate() {
+    void OnActivate() 
+    {
         uint16_t* VideoMemory = (uint16_t*)0xb8000;
         VideoMemory[y * 80 + x] = ((VideoMemory[y * 80 + x] & 0xf000) >> 4) |
                                 ((VideoMemory[y * 80 + x] & 0x0f00) << 4) | 
                                 (VideoMemory[y * 80 + x] & 0x00ff);
     } 
 
-    void OnMouseMove(int8_t nx, int8_t ny) {
+    void OnMouseMove(int8_t nx, int8_t ny) 
+    {
         uint16_t* VideoMemory = (uint16_t*)0xb8000;
         VideoMemory[y * 80 + x] = ((VideoMemory[y * 80 + x] & 0xf000) >> 4) |
                                  ((VideoMemory[y * 80 + x] & 0x0f00) << 4) | 
@@ -102,15 +106,14 @@ extern "C" constructor start_ctors;
 extern "C" constructor end_ctors;
 
 extern "C" void callConstructors() {
-    for (constructor* i = &start_ctors; i!= &end_ctors; i++) {
+    for (constructor* i = &start_ctors; i!= &end_ctors; i++) 
+    {
         (*i)();
     }
 }
 
-extern "C" void kernelMain(void* multiboot_structure, uint32_t magicnumber) {
-    printf("Hello World!\n");
-    printf("cc");
-
+extern "C" void kernelMain(void* multiboot_structure, uint32_t magicnumber) 
+{
     GlobalDescriptorTable gdt;
     InterruptManager interrupts(0x20, &gdt);
 
@@ -123,6 +126,9 @@ extern "C" void kernelMain(void* multiboot_structure, uint32_t magicnumber) {
     MouseToConsole mouseHandler;
     MouseDriver mouse(&interrupts, &mouseHandler);
     drvManager.AddDriver(&mouse);
+
+    PeripheralComponentInterconnectController PCIController;
+    PCIController.SelectDrivers(&drvManager);
     drvManager.ActivateAll();
 
     interrupts.Activate();

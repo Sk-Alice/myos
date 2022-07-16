@@ -14,16 +14,15 @@ KeyBoardDriver::KeyBoardDriver(InterruptManager* manager, KeyboardEventHandler* 
     : InterruptHandler(0x01 + manager->HardwareInterruptOffset(), manager),
     dataport(0x60),
     commandport(0x64),
-    handler(handler) {
-
-}
+    handler(handler) {}
 
 KeyBoardDriver::~KeyBoardDriver() {}
 
 void printf(const char*);
-void printHex(uint8_t);
+void printfHex(uint8_t);
 
-void KeyBoardDriver::Activate() {
+void KeyBoardDriver::Activate() 
+{
     while (commandport.Read() & 0x1) {
         dataport.Read();
     }
@@ -35,7 +34,8 @@ void KeyBoardDriver::Activate() {
     dataport.Write(0xf4);
 }
 
-uint32_t KeyBoardDriver::HandleInterrupt(uint32_t esp) {
+uint32_t KeyBoardDriver::HandleInterrupt(uint32_t esp) 
+{
     uint8_t key = dataport.Read();
 
     if (nullptr == handler) return esp;
@@ -95,7 +95,7 @@ uint32_t KeyBoardDriver::HandleInterrupt(uint32_t esp) {
     default:
         if(key < 0x80) {
             printf("KEYBOARD 0x");
-            printHex(key);
+            printfHex(key);
         }
     }
     return esp;

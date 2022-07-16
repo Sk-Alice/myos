@@ -7,7 +7,8 @@ GlobalDescriptorTable::GlobalDescriptorTable()
     : nullSegmentDescriptor(0, 0, 0),
     unusedSegmentDescriptor(0, 0, 0),
     codeSegmentDescriptor(0, 64 * 1024 * 1024, 0x9a),
-    dataSegmentDescriptor(0, 64 * 1024 * 1024, 0x92) {
+    dataSegmentDescriptor(0, 64 * 1024 * 1024, 0x92) 
+{
     uint32_t i[2];
     i[1] = (uint32_t)this;
     i[0] = sizeof(GlobalDescriptorTable) << 16;
@@ -17,15 +18,18 @@ GlobalDescriptorTable::GlobalDescriptorTable()
 
 GlobalDescriptorTable::~GlobalDescriptorTable() {}
 
-uint16_t GlobalDescriptorTable::DataSegmentSelector() {
+uint16_t GlobalDescriptorTable::DataSegmentSelector() 
+{
     return ((uint8_t*)&dataSegmentDescriptor - (uint8_t*)this) << 3;
 }
 
-uint16_t GlobalDescriptorTable::CodeSegmentSelector() {
+uint16_t GlobalDescriptorTable::CodeSegmentSelector() 
+{
     return ((uint8_t*)&codeSegmentDescriptor - (uint8_t*)this) << 3;
 }
 
-GlobalDescriptorTable::SegmentDescriptor::SegmentDescriptor(uint32_t base, uint32_t limit, uint8_t type) {
+GlobalDescriptorTable::SegmentDescriptor::SegmentDescriptor(uint32_t base, uint32_t limit, uint8_t type) 
+{
     // 获取描述符首地址
     uint8_t* target = (uint8_t*)this;
     // 判断是否需要使用页作为最小单位
@@ -68,7 +72,8 @@ GlobalDescriptorTable::SegmentDescriptor::SegmentDescriptor(uint32_t base, uint3
     target[5] = type;
 }
 
-uint32_t GlobalDescriptorTable::SegmentDescriptor::Base() {
+uint32_t GlobalDescriptorTable::SegmentDescriptor::Base() 
+{
     // 获取当前对象的首地址
     uint8_t* target = (uint8_t*)this;
     // 从最高位开始获取，并进行左移
@@ -79,7 +84,8 @@ uint32_t GlobalDescriptorTable::SegmentDescriptor::Base() {
     return result;
 }
 
-uint32_t GlobalDescriptorTable::SegmentDescriptor::Limit() {
+uint32_t GlobalDescriptorTable::SegmentDescriptor::Limit() 
+{
     uint8_t* target = (uint8_t*)this;
     uint32_t result = target[6] & 0xf;
     result = (result << 8) + target[1];

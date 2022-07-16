@@ -4,21 +4,24 @@ using namespace myos::common;
 using namespace myos::hardwarecommunication;
 
 void printf(const char*);
-void printHex(uint8_t);
+void printfHex(uint8_t);
 
-InterruptHandler::InterruptHandler(uint8_t interruptNumber, InterruptManager* interruptManager) {
+InterruptHandler::InterruptHandler(uint8_t interruptNumber, InterruptManager* interruptManager) 
+{
     this->interruptNumber = interruptNumber;
     this->interruptManager = interruptManager;
     interruptManager->handlers[interruptNumber] = this;
 }
 
-InterruptHandler::~InterruptHandler() {
+InterruptHandler::~InterruptHandler() 
+{
     if (interruptManager->handlers[interruptNumber] == this) {
         interruptManager->handlers[interruptNumber] = 0;
     }
 }
 
-uint32_t InterruptHandler::HandleInterrupt(uint32_t esp) {
+uint32_t InterruptHandler::HandleInterrupt(uint32_t esp) 
+{
     return esp;
 }
 
@@ -31,7 +34,8 @@ void InterruptManager::SetInterruptDescriptorTableEntry(
         uint16_t codeSegmentSelectorOffset,
         void (*handler)(),
         uint8_t DescriptorPrivilegelLevel,
-        uint8_t DescriptorType) {
+        uint8_t DescriptorType) 
+{
             const uint8_t IDT_DESC_PRESENT = 0x80;
 
             interruptDescriptorTable[interruptNumber].handlerAddressLowBits = ((uint32_t)handler) & 0xffff;
@@ -45,7 +49,8 @@ InterruptManager::InterruptManager(uint16_t hardwareInterruptOffset, GlobalDescr
     : picMasterCommand(0x20),
     picMasterData(0x21), 
     picSlaveCommand(0xA0), 
-    picSlaveData(0xA1) {
+    picSlaveData(0xA1) 
+{
     this->hardwareInterruptOffset = hardwareInterruptOffset;
     uint16_t CodeSegment = (gdt->CodeSegmentSelector()) >> 3;
 
@@ -118,11 +123,13 @@ InterruptManager::InterruptManager(uint16_t hardwareInterruptOffset, GlobalDescr
 
 InterruptManager::~InterruptManager() {}
 
-uint16_t InterruptManager::HardwareInterruptOffset() {
+uint16_t InterruptManager::HardwareInterruptOffset() 
+{
     return hardwareInterruptOffset;
 }
 
-void InterruptManager::Activate() {
+void InterruptManager::Activate() 
+{
     if (ActiveInterruptManager != 0) {
         ActiveInterruptManager->Deactivate();
     }
@@ -130,26 +137,29 @@ void InterruptManager::Activate() {
     asm("sti");
 }
 
-void InterruptManager::Deactivate() {
+void InterruptManager::Deactivate() 
+{
     if (ActiveInterruptManager == this) {
         ActiveInterruptManager = 0;
         asm("cli");
     }
 }
 
-uint32_t InterruptManager::HandleInterrupt(uint8_t interruptNumber, uint32_t esp) {
+uint32_t InterruptManager::HandleInterrupt(uint8_t interruptNumber, uint32_t esp) 
+{
     if (ActiveInterruptManager != 0) {
         return ActiveInterruptManager->DoHandleInterrupt(interruptNumber,esp);
     }
     return esp;
 }
 
-uint32_t InterruptManager::DoHandleInterrupt(uint8_t interruptNumber, uint32_t esp) {
+uint32_t InterruptManager::DoHandleInterrupt(uint8_t interruptNumber, uint32_t esp) 
+{
     if (handlers[interruptNumber] != 0) {
         esp = handlers[interruptNumber]->HandleInterrupt(esp);
     } else if (interruptNumber != hardwareInterruptOffset) {
         printf("UNHANDLED INTERRUPT 0x");
-        printHex(interruptNumber);
+        printfHex(interruptNumber);
     }
 
     if (hardwareInterruptOffset <= interruptNumber && interruptNumber < hardwareInterruptOffset + 16) {
