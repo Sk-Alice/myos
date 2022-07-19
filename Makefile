@@ -12,7 +12,8 @@ objects = obj/loader.o \
 			obj/hardwarecommunication/pci.o \
 			obj/drivers/keyboard.o \
 			obj/drivers/mouse.o \
-			obj/kernel.o
+			obj.drivers/vga.o \
+			obj/kernel.o 
 
 
 # 目的:依赖
