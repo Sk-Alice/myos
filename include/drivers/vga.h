@@ -1,20 +1,9 @@
-#include "drivers/vga.h"
+#ifndef __MYOS_HARDWARECOMMUNICATION__VGA_H
+#define __MYOS_HARDWARECOMMUNICATION__VGA_H
 
-using namespace myos::common;
-using namespace myos::drivers;
-
-VideoGraphicsArray::VideoGraphicsArray() 
-    : miscPort(0x32),
-      crtcIndexPort(0x3d4),
-      crtcDataPort(0x3d5),
-      sequencerIndexPort(0x3c4),
-      sequencerDataPort(0x3c5),
-      graphicsControllerIndexPort(0x3ce),
-      graphicsControllerDataPort(0x3cf),
-      attributeControllerIndexPort(0x3c0),
-      attributeControllerReadPort(0x3c1),
-      attributeControllerWritePort(0x3c0),
-      attributeControllerResetPort(0x3da) {}
+#include "common/types.h"
+#include "hardwarecommunication/port.h"
+#include "drivers/driver.h"
 
 namespace myos 
 {
@@ -25,7 +14,7 @@ namespace myos
             VideoGraphicsArray();
             ~VideoGraphicsArray();
 
-            bool SupportsModel(common::uint32_t height, common::uint32_t colordepth); 
+            bool SupportsModel(common::uint32_t width, common::uint32_t height, common::uint32_t colordepth); 
             bool SetMode(common::uint32_t width, common::uint32_t height, common::uint32_t colordepth);
             void PutPixel(common::uint32_t x, common::uint32_t y, common::uint8_t r, common::uint8_t g, common::uint8_t b);
             void PutPixel(common::uint32_t x, common::uint32_t y, common::uint8_t colorIndex);
