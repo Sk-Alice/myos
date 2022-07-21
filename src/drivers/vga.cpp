@@ -65,22 +65,22 @@ bool VideoGraphicsArray::SetMode(uint32_t width, uint32_t height, uint32_t color
     if (!SupportsModel(width, height, colordepth)) return false;
 
     unsigned char g_320x200x256[] = {
-        /* MISC */
+    /* MISC */
         0x63,
-        /* SEQ */
+    /* SEQ */
         0x03, 0x01, 0x0F, 0x00, 0x0E,
-        /* CRTC */
+    /* CRTC */
         0x5F, 0x4F, 0x50, 0x82, 0x54, 0x80, 0xBF, 0x1F,
         0x00, 0x41, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x9C, 0x0E, 0x8F, 0x28, 0x40, 0x96, 0xB9, 0xA3,
+        0x9C, 0x0E, 0x8F, 0x28,	0x40, 0x96, 0xB9, 0xA3,
         0xFF,
-        /* GC */
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x05, 0x0f,
+    /* GC */
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x05, 0x0F,
         0xFF,
-        /* AC */
+    /* AC */
         0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
         0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
-        0x41, 0x00, 0x0F, 0x00, 0x00
+        0x41, 0x00, 0x0F, 0x00,	0x00
     };
     WriteRegisters(g_320x200x256);
     return true;
@@ -101,19 +101,33 @@ uint8_t* VideoGraphicsArray::GetFrameBufferSegment()
     }
 }
 
-void VideoGraphicsArray::PutPixel(uint32_t x, uint32_t y, uint8_t colorIndex)
+void VideoGraphicsArray::PutPixel(int32_t x, int32_t y, uint8_t colorIndex)
 {
+    if (x < 0 || 320 <= x || y < 0 || 200 <= y) return;
     uint8_t* pixelAddress = GetFrameBufferSegment() + 320 * y + x;
     *pixelAddress = colorIndex;
 }
 
 uint8_t VideoGraphicsArray::GetColorIndex(uint8_t r, uint8_t g, uint8_t b)
 {
-    if (r == 0x00, g == 0x00, b == 0xa8) return 0x01;
+    if (r == 0x00 && g == 0x00 && b == 0x00) return 0x00; // black
+    if (r == 0x00 && g == 0x00 && b == 0xa8) return 0x01; // blue
+    if (r == 0x00 && g == 0xa8 && b == 0x00) return 0x02; // green
+    if (r == 0xa8 && g == 0x00 && b == 0x00) return 0x04; // red
+    if (r == 0xff && g == 0xff && b == 0xff) return 0x3f; // white
     return 0x00;
 }
 
-void VideoGraphicsArray::PutPixel(uint32_t x, uint32_t y, uint8_t r, uint8_t g, uint8_t b)
+void VideoGraphicsArray::PutPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b)
 {
     PutPixel(x, y, GetColorIndex(r, g, b));
+}
+
+void VideoGraphicsArray::FillRectangle(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t r, uint8_t g, uint8_t b) 
+{
+    for (uint32_t Y = y; Y < y + h; Y++) {
+        for (uint32_t X = x; X < x + w; X++) {
+            PutPixel(X, Y, r, g, b);
+        }
+    }
 }

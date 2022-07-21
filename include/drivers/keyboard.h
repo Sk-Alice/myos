@@ -6,10 +6,8 @@
 #include "hardwarecommunication/port.h"
 #include "drivers/driver.h"
 
-namespace myos 
-{
-    namespace drivers 
-    {
+namespace myos {
+    namespace drivers {
         class KeyboardEventHandler {
         public:
             KeyboardEventHandler();

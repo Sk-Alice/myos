@@ -1,10 +1,8 @@
 #ifndef __MYOS__DRIVERS__DRIVER_H
 #define __MYOS__DRIVERS__DRIVER_H
 
-namespace myos 
-{
-    namespace drivers 
-    {
+namespace myos {
+    namespace drivers {
         class Driver {
         public:
             Driver();

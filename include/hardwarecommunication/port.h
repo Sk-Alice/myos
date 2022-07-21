@@ -3,15 +3,13 @@
 
 #include "common/types.h"
 
-namespace myos 
-{
-    namespace hardwarecommunication 
-    {
+namespace myos {
+    namespace hardwarecommunication {
         class Port {
         protected:
             myos::common::uint16_t portnumber;
             Port(myos::common::uint16_t portnumber);
-            ~Port();
+            virtual ~Port();
         };
 
         class Port8Bit : public Port {

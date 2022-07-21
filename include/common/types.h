@@ -1,10 +1,8 @@
 #ifndef __MYOS__COMMON__TYPES_H
 #define __MYOS__COMMON__TYPES_H
 
-namespace myos 
-{
-    namespace common 
-    {
+namespace myos {
+    namespace common {
         typedef char int8_t;
         typedef unsigned char uint8_t;
 

@@ -6,10 +6,8 @@
 #include "hardwarecommunication/interrupts.h"
 #include "drivers/driver.h"
 
-namespace myos 
-{
-    namespace hardwarecommunication 
-    {
+namespace myos {
+    namespace hardwarecommunication {
         enum BaseAddressRegistertype {
             MemoryMapping = 0,
             InputOutput = 1

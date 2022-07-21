@@ -5,10 +5,8 @@
 #include "hardwarecommunication/port.h"
 #include "gdt.h"
 
-namespace myos 
-{
-    namespace hardwarecommunication 
-    {
+namespace myos {
+    namespace hardwarecommunication {
         class InterruptManager;
 
         class InterruptHandler {

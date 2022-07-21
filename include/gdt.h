@@ -3,8 +3,7 @@
 
 #include "common/types.h"
 
-namespace myos
-{
+namespace myos {
     class GlobalDescriptorTable {
     public:
         class SegmentDescriptor {
