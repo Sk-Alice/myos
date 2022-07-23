@@ -16,7 +16,7 @@ namespace myos {
             bool SetMode(common::uint32_t width, common::uint32_t height, common::uint32_t colordepth);
             void PutPixel(common::int32_t x, common::int32_t y, common::uint8_t r, common::uint8_t g, common::uint8_t b);
             void PutPixel(common::int32_t x, common::int32_t y, common::uint8_t colorIndex);
-            void FillRectangle(common::uint32_t x, common::uint32_t y, common::uint32_t w, common::uint32_t h, common::uint8_t r, common::uint8_t g, common::uint8_t b);
+            void FillRectangle(common::int32_t x, common::int32_t y, common::uint32_t w, common::uint32_t h, common::uint8_t r, common::uint8_t g, common::uint8_t b);
         private:
             hardwarecommunication::Port8Bit miscPort;
             hardwarecommunication::Port8Bit crtcIndexPort;

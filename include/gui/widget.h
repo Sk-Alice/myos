@@ -3,10 +3,11 @@
 
 #include "common/types.h"
 #include "common/graphicscontext.h"
+#include "drivers/keyboard.h"
 
 namespace myos {
     namespace gui {
-        class Widget {
+        class Widget : public drivers::keyboardEventHandler {
         public:
             Widget(Widget* parent, common::int32_t x, common::int32_t y,
                 common::int32_t w, common::int32_t h, common::uint8_t r,
@@ -14,15 +15,14 @@ namespace myos {
             virtual ~Widget();
 
             virtual void GetFocus(Widget* widget);
-            virtual void ModelToScrean(common::uint32_t& x, common::uint32_t& y);
+            virtual void ModelToScrean(common::int32_t& x, common::int32_t& y);
+
+            virtual void ContainsCoordinate(common::int32_t x, common::int32_t y);
 
             virtual void Draw(common::GraphicsContext* gc);
-            virtual void OnMouseDown(common::int32_t x, common::int32_t y);
-            virtual void OnMouseUp(common::int32_t x, common::int32_t y);
+            virtual void OnMouseDown(common::int32_t x, common::int32_t y, common::uint8_t button);
+            virtual void OnMouseUp(common::int32_t x, common::int32_t y, common::uint8_t button);
             virtual void OnMouseMove(common::int32_t x, common::int32_t y, common::int32_t nx, common::int32_t ny);
-
-            virtual void OnKeyDown(common::int32_t x, common::int32_t y);
-            virtual void OnKeyUp(common::int32_t x, common::int32_t y);
         private:
             Widget* parent;
             common::int32_t x, y, w, h;
@@ -38,18 +38,19 @@ namespace myos {
             ~CompositeWidget();
 
             virtual void GetFocus(Widget* widget);
-            virtual void ModelToScrean(common::uint32_t& x, common::uint32_t& y);
+            virtual bool AddChild(Widget* child);
+            virtual void ModelToScrean(common::int32_t& x, common::int32_t& y);
 
             virtual void Draw(common::GraphicsContext* gc);
-            virtual void OnMouseDown(common::int32_t x, common::int32_t y);
-            virtual void OnMouseUp(common::int32_t x, common::int32_t y);
+            virtual void OnMouseDown(common::int32_t x, common::int32_t y, common::uint8_t button);
+            virtual void OnMouseUp(common::int32_t x, common::int32_t y, common::uint8_t button);
             virtual void OnMouseMove(common::int32_t x, common::int32_t y, common::int32_t nx, common::int32_t ny);
 
-            virtual void OnKeyDown(common::int32_t x, common::int32_t y);
-            virtual void OnKeyUp(common::int32_t x, common::int32_t y);
+            virtual void OnKeyDown(char c);
+            virtual void OnKeyUp(char c);
         private:
             Widget* children[100];
-            int numClidren;
+            uint32_t numClidren;
             Widget* focussedChild;
         };
     }
