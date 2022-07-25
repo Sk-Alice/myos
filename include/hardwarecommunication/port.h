@@ -9,7 +9,7 @@ namespace myos {
         protected:
             myos::common::uint16_t portnumber;
             Port(myos::common::uint16_t portnumber);
-            virtual ~Port();
+            ~Port();
         };
 
         class Port8Bit : public Port {

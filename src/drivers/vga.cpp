@@ -125,8 +125,8 @@ void VideoGraphicsArray::PutPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, ui
 
 void VideoGraphicsArray::FillRectangle(int32_t x, int32_t y, uint32_t w, uint32_t h, uint8_t r, uint8_t g, uint8_t b) 
 {
-    for (uint32_t Y = y; Y < y + h; Y++) {
-        for (uint32_t X = x; X < x + w; X++) {
+    for (int32_t Y = y; Y < y + h; Y++) {
+        for (int32_t X = x; X < x + w; X++) {
             PutPixel(X, Y, r, g, b);
         }
     }

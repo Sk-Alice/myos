@@ -18,7 +18,6 @@ objects = obj/loader.o \
 			obj/gui/desktop.o \
 			obj/kernel.o 
 
-
 # 目的:依赖
 #	通过依赖生成目的的命令
 #	$@ 代表目的

@@ -6,11 +6,14 @@
 #include "drivers/mouse.h"
 #include "drivers/driver.h"
 #include "drivers/vga.h"
+#include "gui/desktop.h"
+#include "gui/window.h"
 
 using namespace myos;
 using namespace myos::common;
 using namespace myos::drivers;
 using namespace myos::hardwarecommunication;
+using namespace myos::gui;
 
 void printf(const char* str) 
 {
@@ -118,14 +121,27 @@ extern "C" void kernelMain(void* multiboot_structure, uint32_t magicnumber)
     GlobalDescriptorTable gdt;
     InterruptManager interrupts(0x20, &gdt);
 
-    DriverManager drvManager;
-    PrintKeyboardEventHandler kbhandler;
 
+#define GRAPHICMODE
+#ifdef GRAPHICMODE
+    Desktop desktop(320, 200, 0x00, 0x00, 0xa8);
+#endif
+    DriverManager drvManager;
+
+#ifdef GRAPHICMODE
+    KeyBoardDriver keyboard(&interrupts, &desktop);
+#else
+    PrintKeyboardEventHandler kbhandler;
     KeyBoardDriver keyboard(&interrupts, &kbhandler);
+#endif
     drvManager.AddDriver(&keyboard);
 
+#ifdef GRAPHICMODE
+    MouseDriver mouse(&interrupts, &desktop);
+#else
     MouseToConsole mouseHandler;
     MouseDriver mouse(&interrupts, &mouseHandler);
+#endif    
     drvManager.AddDriver(&mouse);
 
     PeripheralComponentInterconnectController PCIController;
@@ -134,8 +150,19 @@ extern "C" void kernelMain(void* multiboot_structure, uint32_t magicnumber)
 
     drvManager.ActivateAll();
 
-    interrupts.Activate();
-    vga.SetMode(320, 200, 0);
+#ifdef GRAPHICMODE
+    vga.SetMode(320, 200, 8);
+    Window w1(&desktop, 10, 10, 20, 20, 0xa8, 0x00, 0x00);
+    desktop.AddChild(&w1);
+    Window w2(&desktop, 40, 15, 30, 30, 0x00, 0xa8, 0x00);
+    desktop.AddChild(&w2);
+#endif
 
-    while(1);
+    interrupts.Activate();
+    
+    while(1) {
+#ifdef GRAPHICMODE
+        desktop.Draw(&vga);
+#endif
+    }
 }

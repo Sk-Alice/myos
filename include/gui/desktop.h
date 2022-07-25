@@ -14,7 +14,7 @@ namespace myos {
             void Draw(common::GraphicsContext* gc);
             void OnMouseDown(common::uint8_t button);
             void OnMouseUp(common::uint8_t button);
-            void OnMouseMove(common::int32_t x, common::int32_t y);
+            void OnMouseMove(common::int8_t x, common::int8_t y);
         private:
             common::uint32_t MouseX, MouseY;
         };
