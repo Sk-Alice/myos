@@ -15,7 +15,7 @@ namespace myos {
             ~Widget();
 
             virtual void GetFocus(Widget* widget);
-            virtual void ModelToScrean(common::int32_t& x, common::int32_t& y);
+            virtual void ModelToScreen(common::int32_t& x, common::int32_t& y);
             virtual bool ContainsCoordinate(common::int32_t x, common::int32_t y);
 
             virtual void Draw(common::GraphicsContext* gc);

@@ -82,12 +82,12 @@ public:
                                 (VideoMemory[y * 80 + x] & 0x00ff);
     } 
 
-    void OnMouseMove(int8_t nx, int8_t ny) 
+    void OnMouseMove(int8_t nx, int8_t ny) override 
     {
         uint16_t* VideoMemory = (uint16_t*)0xb8000;
         VideoMemory[y * 80 + x] = ((VideoMemory[y * 80 + x] & 0xf000) >> 4) |
-                                 ((VideoMemory[y * 80 + x] & 0x0f00) << 4) | 
-                                 (VideoMemory[y * 80 + x] & 0x00ff);
+                                ((VideoMemory[y * 80 + x] & 0x0f00) << 4) |
+                                (VideoMemory[y * 80 + x] & 0x00ff);
 
         x += nx;
         if (x < 0) x = 0;
@@ -98,8 +98,8 @@ public:
         else if (y >= 25) y = 24;
 
         VideoMemory[y * 80 + x] = ((VideoMemory[y * 80 + x] & 0xf000) >> 4) |
-                                 ((VideoMemory[y * 80 + x] & 0x0f00) << 4) | 
-                                 (VideoMemory[y * 80 + x] & 0x00ff);
+                                ((VideoMemory[y * 80 + x] & 0x0f00) << 4) |
+                                (VideoMemory[y * 80 + x] & 0x00ff);
     }
 private:
     int8_t x, y;
