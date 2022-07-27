@@ -8,6 +8,7 @@
 #include "drivers/vga.h"
 #include "gui/desktop.h"
 #include "gui/window.h"
+#include "multitasking.h"
 
 using namespace myos;
 using namespace myos::common;
@@ -116,13 +117,33 @@ extern "C" void callConstructors() {
     }
 }
 
+void taskA()
+{
+    while (true) {
+        printf("A");
+    }
+}
+
+void taskB() 
+{
+    while (true) {
+        printf("B");
+    }
+}
+
 extern "C" void kernelMain(void* multiboot_structure, uint32_t magicnumber) 
 {
     GlobalDescriptorTable gdt;
-    InterruptManager interrupts(0x20, &gdt);
 
+    TaskManager taskManager;
+    Task task1(&gdt, taskA);
+    Task task2(&gdt, taskB);
+    taskManager.AddTask(&task1);
+    taskManager.AddTask(&task2);
 
-#define GRAPHICMODE
+InterruptManager interrupts(0x20, &gdt, &taskManager);
+
+// #define GRAPHICMODE
 #ifdef GRAPHICMODE
     Desktop desktop(320, 200, 0x00, 0x00, 0xa8);
 #endif
