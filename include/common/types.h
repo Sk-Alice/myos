@@ -14,6 +14,9 @@ namespace myos {
 
         typedef long long int64_t;
         typedef unsigned long long uint64_t;
+
+        typedef const char* string;
+        typedef uint32_t size_t;
     }
 }
 
