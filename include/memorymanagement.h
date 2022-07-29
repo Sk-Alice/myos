@@ -25,12 +25,12 @@ namespace myos {
     };
 }
 
-void* operator new(common::size_t size);
-void* operator new[](common::size_t size);
+void* operator new(myos::common::size_t size);
+void* operator new[](myos::common::size_t size);
 
 // placement new
-void* operator new(common::size_t size, void* ptr);
-void* operator new[](common::size_t size, void* ptr);
+void* operator new(myos::common::size_t size, void* ptr);
+void* operator new[](myos::common::size_t size, void* ptr);
 
 void operator delete(void* ptr);
 void operator delete[](void* ptr);

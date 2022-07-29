@@ -29,8 +29,8 @@ MemoryManager::~MemoryManager()
 
 void* MemoryManager::malloc(size_t size) 
 {
-    MemoryManager* result = nullptr;
-    for (MemoryManager* chunk = firstl chunk != nullptr; chunk = chunk->next ) {
+    MemoryChunk* result = nullptr;
+    for (MemoryChunk* chunk = first; chunk != nullptr; chunk = chunk->next ) {
         if (chunk->size > size && !chunk->allocated) {
             result = chunk;
         }
@@ -75,5 +75,41 @@ void MemoryManager::free(void* ptr)
         if (chunk->next != nullptr) {
             chunk->next->prev = chunk;
         }
+    }
+}
+
+void* operator new(size_t size)
+{
+    if (MemoryManager::activeMemoryManager == nullptr) return nullptr;
+    return MemoryManager::activeMemoryManager->malloc(size);
+}
+
+void* operator new[](size_t size) 
+{
+    if (MemoryManager::activeMemoryManager == nullptr) return nullptr;
+    return MemoryManager::activeMemoryManager->malloc(size);
+}
+
+void* operator new(size_t size, void* ptr)
+{
+    return ptr;
+}
+
+void* operator new[](size_t szie, void* ptr)
+{
+    return ptr;
+}
+
+void operator delete(void* ptr)
+{
+    if (MemoryManager::activeMemoryManager != nullptr) {
+        MemoryManager::activeMemoryManager->free(ptr);
+    }
+}
+
+void operator delete[](void* ptr)
+{
+    if (MemoryManager::activeMemoryManager != nullptr) {
+        MemoryManager::activeMemoryManager->free(ptr);
     }
 }
