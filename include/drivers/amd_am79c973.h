@@ -2,7 +2,7 @@
 #define __MYOS__DRIVERS__AMD_AM79C973_H
 
 #include "common/types.h"
-#include "drivers/dirver/h"
+#include "drivers/driver.h"
 #include "hardwarecommunication/pci.h"
 #include "hardwarecommunication/interrupts.h"
 #include "hardwarecommunication/port.h"
@@ -17,8 +17,16 @@ namespace myos {
 
             void Activate();
             int Reset();
-            common::uint32_t HandleInterrupt(command::uint32_t esp);
-        
+            common::uint32_t HandleInterrupt(common::uint32_t esp);
+
+            void Send(common::uint8_t* buffer, int size);
+            void Receive();
+
+            // void SetHandler(RawDataHandler* handler);
+            // common::uint64_t GetMACAddress();
+
+            // void SetIPAddress(common::uint32_t);
+            // common::uint32_t GetIPAddress();
         private:
             struct InitializationBlock {
                 common::uint16_t mode;
@@ -43,7 +51,7 @@ namespace myos {
             hardwarecommunication::Port16Bit MACAddress0Port;
             hardwarecommunication::Port16Bit MACAddress2Port;
             hardwarecommunication::Port16Bit MACAddress4Port;
-            hardwarecommunication::Port16Bit registerPort;
+            hardwarecommunication::Port16Bit registerDataPort;
             hardwarecommunication::Port16Bit registerAddressPort;
             hardwarecommunication::Port16Bit resetPort;
             hardwarecommunication::Port16Bit busControlRegisterDataPort;
@@ -59,8 +67,7 @@ namespace myos {
             common::uint8_t recvBufferDescMemory[2048 + 15];
             common::uint8_t recvBuffers[2048 + 18][8];
             common::uint8_t currentRecvBuffer;
-
-        }
+        };
     }
 }
 

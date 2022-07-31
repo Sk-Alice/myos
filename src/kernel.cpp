@@ -10,6 +10,7 @@
 #include "gui/window.h"
 #include "multitasking.h"
 #include "memorymanagement.h"
+#include "drivers/amd_am79c973.h"
 
 using namespace myos;
 using namespace myos::common;
@@ -203,6 +204,9 @@ InterruptManager interrupts(0x20, &gdt, &taskManager);
     Window w2(&desktop, 40, 15, 30, 30, 0x00, 0xa8, 0x00);
     desktop.AddChild(&w2);
 #endif
+
+    amd_am79c973* eth0 = (amd_am79c973*)(drvManager.drivers[2]);
+    eth0->Send((uint8_t*)"Hello NetWork", 13);
 
     interrupts.Activate();
     

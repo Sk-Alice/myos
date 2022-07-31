@@ -20,7 +20,7 @@ namespace myos {
 
             void AddDriver(Driver* driver);
             void ActivateAll();
-        private:
+
             Driver* drivers[256];
             int numDrivers;
         };
