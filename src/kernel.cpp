@@ -11,12 +11,15 @@
 #include "multitasking.h"
 #include "memorymanagement.h"
 #include "drivers/amd_am79c973.h"
+#include "net/etherframe.h"
+#include "net/arp.h"
 
 using namespace myos;
 using namespace myos::common;
 using namespace myos::drivers;
 using namespace myos::hardwarecommunication;
 using namespace myos::gui;
+using namespace myos::net;
 
 void printf(const char* str) 
 {
@@ -205,10 +208,30 @@ InterruptManager interrupts(0x20, &gdt, &taskManager);
     desktop.AddChild(&w2);
 #endif
 
+    uint8_t ip1 = 10, ip2 = 0, ip3 = 2, ip4 = 15;
+    uint32_t ip_be = ((uint32_t)ip4 << 24 | 
+                    (uint32_t)ip3 << 16 |
+                    (uint32_t)ip2 << 8 |
+                    (uint32_t)ip1);
+
+    uint8_t gip1 = 10, gip2 = 0, gip3 = 2, gip4 = 2;
+    uint32_t gip_be = ((uint32_t)gip4 << 24 | 
+                    (uint32_t)gip3 << 16 |
+                    (uint32_t)gip2 << 8 |
+                    (uint32_t)gip1);
+
     amd_am79c973* eth0 = (amd_am79c973*)(drvManager.drivers[2]);
-    eth0->Send((uint8_t*)"Hello NetWork", 13);
+    
+    eth0->SetIPAddress(ip_be);
+    EtherFrameProvider etherframe(eth0);
+    
+    AddressResolutionProtocol arp(&etherframe);
+    // etherframe.Send(0xffffffffffff, 0x608, (uint8_t*)"Hello NetWork", 13);
 
     interrupts.Activate();
+
+    printf("\n\n");
+    arp.Resolve(gip_be);
     
     while(1) {
 #ifdef GRAPHICMODE

@@ -105,11 +105,13 @@ Driver* PeripheralComponentInterconnectController::GetDriver(PeripheralComponent
     case 0x1022: // AMD
         switch (dev.device_id) {
         case 0x2000:    // amd_am79c973
+            printf("AMD am79c973\n");
             driver = (amd_am79c973*)MemoryManager::activeMemoryManager->malloc(sizeof(amd_am79c973));
             if (driver != nullptr) {
                 new (driver)amd_am79c973(&dev, interrupts);     // placement new
+            } else {
+                printf("AMD am79c973 instantiation failed\n");
             }
-            printf("AMD am79c973");
             return driver;
             break;
         }

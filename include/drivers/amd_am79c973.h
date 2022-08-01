@@ -8,10 +8,24 @@
 #include "hardwarecommunication/port.h"
 
 namespace myos {
-    namespace drivers {
+        namespace drivers {
+        class amd_am79c973;
+
+        class RawDataHandler {
+        public:
+            RawDataHandler(amd_am79c973* backend);
+            ~RawDataHandler();
+
+            virtual bool OnRawDataReceived(common::uint8_t* buffer, common::uint32_t size);
+            void Send(common::uint8_t* buffer, common::uint32_t size);
+            
+        protected:
+            amd_am79c973* backend;
+        };
+
         class amd_am79c973 : public Driver, public hardwarecommunication::InterruptHandler {
         public:
-            amd_am79c973(myos::hardwarecommunication::PeripheralComponentInterconnectDeviceDescriptor* dev,
+            amd_am79c973(myos::hardwarecommunication::PeripheralComponentInterconnectDeviceDescriptor* dev, 
                 myos::hardwarecommunication::InterruptManager* interrupts);
             ~amd_am79c973();
 
@@ -22,15 +36,15 @@ namespace myos {
             void Send(common::uint8_t* buffer, int size);
             void Receive();
 
-            // void SetHandler(RawDataHandler* handler);
-            // common::uint64_t GetMACAddress();
+            void SetHandler(RawDataHandler* handler);
+            common::uint64_t GetMACAddress();
 
-            // void SetIPAddress(common::uint32_t);
-            // common::uint32_t GetIPAddress();
+            void SetIPAddress(common::uint32_t);
+            common::uint32_t GetIPAddress();
         private:
             struct InitializationBlock {
                 common::uint16_t mode;
-                unsigned reserved1 : 4;         // C++位域
+                unsigned reserved1 : 4;         // C++ 位域
                 unsigned numSendBuffers : 4;
                 unsigned reserved2 : 4;
                 unsigned numRecvBuffers : 4;
@@ -57,16 +71,17 @@ namespace myos {
             hardwarecommunication::Port16Bit busControlRegisterDataPort;
 
             InitializationBlock initBlock;
-
             BufferDescriptor* sendBufferDesc;
             common::uint8_t sendBufferDescMemory[2048 + 15];
-            common::uint8_t sendBuffers[2048 + 15][8];
+            common::uint8_t sendBuffers[8][2048 + 15];
             common::uint8_t currentSendBuffer;
-
+            
             BufferDescriptor* recvBufferDesc;
             common::uint8_t recvBufferDescMemory[2048 + 15];
-            common::uint8_t recvBuffers[2048 + 18][8];
+            common::uint8_t recvBuffers[8][2048 + 15];
             common::uint8_t currentRecvBuffer;
+
+            RawDataHandler* handler;
         };
     }
 }

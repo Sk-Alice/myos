@@ -5,6 +5,27 @@ using namespace myos::common;
 using namespace myos::drivers;
 using namespace myos::hardwarecommunication;
 
+RawDataHandler::RawDataHandler(amd_am79c973* backend) 
+{
+    this->backend = backend;
+    backend->SetHandler(this);
+}
+
+RawDataHandler::~RawDataHandler() 
+{
+    backend->SetHandler(nullptr);
+}
+
+bool RawDataHandler::OnRawDataReceived(uint8_t* buffer, uint32_t size) 
+{
+    return false;
+}
+
+void RawDataHandler::Send(uint8_t* buffer, uint32_t size) 
+{
+    backend->Send(buffer, size);
+}
+
 amd_am79c973::amd_am79c973(PeripheralComponentInterconnectDeviceDescriptor* dev, InterruptManager* interrupts) 
     : Driver(),
       InterruptHandler(dev->interrupt + interrupts->HardwareInterruptOffset(), interrupts),
@@ -16,7 +37,7 @@ amd_am79c973::amd_am79c973(PeripheralComponentInterconnectDeviceDescriptor* dev,
       resetPort(dev->portBase + 0x14),
       busControlRegisterDataPort(dev->portBase + 0x16) 
 {
-    // handler = nullptr;
+    handler = nullptr;
     currentSendBuffer = 0;
     currentRecvBuffer = 0;
 
@@ -149,11 +170,11 @@ void amd_am79c973::Receive()
                 printf(" ");
             }
 
-            // if (handler != nullptr) {
-            //     if (handler->OnRawDataReceived(buffer, size)) {
-            //         Send(buffer, size);
-            //     }
-            // }
+            if (handler != nullptr) {
+                if (handler->OnRawDataReceived(buffer, size)) {
+                    Send(buffer, size);
+                }
+            }
         }
 
         recvBufferDesc[currentRecvBuffer].flags2 = 0;
@@ -161,22 +182,22 @@ void amd_am79c973::Receive()
     }
 }
 
-// void amd_am79c973::SetHandler(RawDataHandler* handler) 
-// {
-//     this->handler = handler;
-// }
+void amd_am79c973::SetHandler(RawDataHandler* handler) 
+{
+    this->handler = handler;
+}
 
-// uint64_t amd_am79c973::GetMACAddress() 
-// {
-//     return initBlock.physicalAddress;
-// }
+uint64_t amd_am79c973::GetMACAddress() 
+{
+    return initBlock.physicalAddress;
+}
 
-// void amd_am79c973::SetIPAddress(uint32_t ip_be) 
-// {
-//     initBlock.logicalAddress = ip_be;
-// }
+void amd_am79c973::SetIPAddress(uint32_t ip_be) 
+{
+    initBlock.logicalAddress = ip_be;
+}
 
-// uint32_t amd_am79c973::GetIPAddress() 
-// {
-//     return initBlock.logicalAddress;
-// }
+uint32_t amd_am79c973::GetIPAddress() 
+{
+    return initBlock.logicalAddress;
+}

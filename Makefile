@@ -19,6 +19,8 @@ objects = obj/loader.o \
 			obj/gui/widget.o \
 			obj/gui/window.o \
 			obj/gui/desktop.o \
+			obj/net/etherframe.o \
+			obj/net/arp.o \
 			obj/kernel.o 
 
 # 目的:依赖
