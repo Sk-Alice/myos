@@ -21,6 +21,8 @@ objects = obj/loader.o \
 			obj/gui/desktop.o \
 			obj/net/etherframe.o \
 			obj/net/arp.o \
+			obj/net/ipv4.o \
+			obj/net/icmp.o \
 			obj/kernel.o 
 
 # 目的:依赖
