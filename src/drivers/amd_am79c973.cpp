@@ -1,5 +1,4 @@
 #include "drivers/amd_am79c973.h"
-
 using namespace myos;
 using namespace myos::common;
 using namespace myos::drivers;
@@ -13,7 +12,7 @@ RawDataHandler::RawDataHandler(amd_am79c973* backend)
 
 RawDataHandler::~RawDataHandler() 
 {
-    backend->SetHandler(nullptr);
+    backend->SetHandler(0);
 }
 
 bool RawDataHandler::OnRawDataReceived(uint8_t* buffer, uint32_t size) 
@@ -35,9 +34,10 @@ amd_am79c973::amd_am79c973(PeripheralComponentInterconnectDeviceDescriptor* dev,
       registerDataPort(dev->portBase + 0x10),
       registerAddressPort(dev->portBase + 0x12),
       resetPort(dev->portBase + 0x14),
-      busControlRegisterDataPort(dev->portBase + 0x16) 
+      busConstrolRegisterDataPort(dev->portBase + 0x16) 
 {
-    handler = nullptr;
+
+    handler = 0;
     currentSendBuffer = 0;
     currentRecvBuffer = 0;
 
@@ -51,7 +51,7 @@ amd_am79c973::amd_am79c973(PeripheralComponentInterconnectDeviceDescriptor* dev,
     uint64_t MAC = MAC5 << 40 | MAC4 << 32 | MAC3 << 24 | MAC2 << 16 | MAC1 << 8 | MAC0;
 
     registerAddressPort.Write(20);
-    busControlRegisterDataPort.Write(0x102);
+    busConstrolRegisterDataPort.Write(0x102);
 
     registerAddressPort.Write(0);
     registerDataPort.Write(0x04);
@@ -157,7 +157,7 @@ void amd_am79c973::Receive()
 {
     printf("\nRECEIVING: ");
 
-    for (; (recvBufferDesc[currentRecvBuffer].flags & 0x80000000) == 0;
+    for (;(recvBufferDesc[currentRecvBuffer].flags & 0x80000000) == 0;
         currentRecvBuffer = (currentRecvBuffer + 1) % 8) {
         if (!(recvBufferDesc[currentRecvBuffer].flags & 0x40000000) && 
             (recvBufferDesc[currentRecvBuffer].flags & 0x03000000) == 0x03000000) { 
@@ -170,7 +170,7 @@ void amd_am79c973::Receive()
                 printf(" ");
             }
 
-            if (handler != nullptr) {
+            if (handler != 0) {
                 if (handler->OnRawDataReceived(buffer, size)) {
                     Send(buffer, size);
                 }

@@ -1,5 +1,5 @@
-#ifndef __MYOS__DRIVERS__AMD_AM79C973_H
-#define __MYOS__DRIVERS__AMD_AM79C973_H
+#ifndef __MYOS_DRIVERS__AMD_AM79C973_H
+#define __MYOS_DRIVERS__AMD_AM79C973_H
 
 #include "common/types.h"
 #include "drivers/driver.h"
@@ -8,7 +8,7 @@
 #include "hardwarecommunication/port.h"
 
 namespace myos {
-        namespace drivers {
+    namespace drivers {
         class amd_am79c973;
 
         class RawDataHandler {
@@ -44,7 +44,7 @@ namespace myos {
         private:
             struct InitializationBlock {
                 common::uint16_t mode;
-                unsigned reserved1 : 4;         // C++ 位域
+                unsigned reserved1 : 4;
                 unsigned numSendBuffers : 4;
                 unsigned reserved2 : 4;
                 unsigned numRecvBuffers : 4;
@@ -68,7 +68,7 @@ namespace myos {
             hardwarecommunication::Port16Bit registerDataPort;
             hardwarecommunication::Port16Bit registerAddressPort;
             hardwarecommunication::Port16Bit resetPort;
-            hardwarecommunication::Port16Bit busControlRegisterDataPort;
+            hardwarecommunication::Port16Bit busConstrolRegisterDataPort;
 
             InitializationBlock initBlock;
             BufferDescriptor* sendBufferDesc;
@@ -86,4 +86,4 @@ namespace myos {
     }
 }
 
-#endif
+#endif 
